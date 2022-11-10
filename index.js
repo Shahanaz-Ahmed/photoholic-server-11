@@ -42,6 +42,7 @@ async function run() {
       res.send(service);
     });
 
+    //individual read
     app.get("/reviews/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
@@ -61,7 +62,7 @@ async function run() {
       const reviews = await cursor.toArray();
       res.send(reviews);
     });
-    //create data
+    //create data - using post
     app.post("/reviews", async (req, res) => {
       const review = req.body;
       const result = await reviewCollection.insertOne(review);
