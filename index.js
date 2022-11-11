@@ -68,6 +68,28 @@ async function run() {
       const result = await reviewCollection.insertOne(review);
       res.send(result);
     });
+
+    //my -review API
+    app.get("/myreviews", async (req, res) => {
+      let query = {};
+
+      if (req.query.email) {
+        query = {
+          email: req.query.email,
+        };
+      }
+
+      const cursor = reviewCollection.find(query).sort({ _id: -1 });
+      const reviews = await cursor.toArray();
+      res.send(reviews);
+    });
+
+    app.get("/myreviews/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: ObjectId(email) };
+      const single_review = await reviewCollection.findOne(query);
+      res.send(single_review);
+    });
   } finally {
   }
 }
