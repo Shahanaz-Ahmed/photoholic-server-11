@@ -90,6 +90,44 @@ async function run() {
       const single_review = await reviewCollection.findOne(query);
       res.send(single_review);
     });
+
+    app.get("/myreviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const single_review = await reviewCollection.findOne(query);
+      res.send(single_review);
+    });
+
+    //update
+    app.patch("/myreviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const status = req.body.status;
+      const query = {
+        _id: ObjectId(id),
+      };
+      const updatedDoc = {
+        $set: {
+          status: status,
+        },
+      };
+      const result = await reviewCollection.updateOne(query, updatedDoc);
+      res.send(result);
+    });
+
+    //delete my review
+    app.delete("/myreviews/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: ObjectId(email) };
+      const result = await reviewCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    app.delete("/myreviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await reviewCollection.deleteOne(query);
+      res.send(result);
+    });
   } finally {
   }
 }
