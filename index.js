@@ -42,10 +42,22 @@ async function run() {
       res.send(service);
     });
 
+    //add services
+    app.post("/services", async (req, res) => {
+      const service = req.body;
+      const result = await serviceCollection.insertOne(service);
+      res.send(result);
+    });
     //individual read
     app.get("/reviews/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
+      const single_review = await reviewCollection.findOne(query);
+      res.send(single_review);
+    });
+    app.get("/reviews/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: ObjectId(email) };
       const single_review = await reviewCollection.findOne(query);
       res.send(single_review);
     });
@@ -58,7 +70,7 @@ async function run() {
           email: req.query.email,
         };
       }
-      const cursor = reviewCollection.find(query);
+      const cursor = reviewCollection.find(query).sort({ _id: -1 });
       const reviews = await cursor.toArray();
       res.send(reviews);
     });
@@ -102,9 +114,7 @@ async function run() {
     app.patch("/myreviews/:id", async (req, res) => {
       const id = req.params.id;
       const status = req.body.status;
-      const query = {
-        _id: ObjectId(id),
-      };
+      const query = { _id: ObjectId(id) };
       const updatedDoc = {
         $set: {
           status: status,
@@ -115,17 +125,22 @@ async function run() {
     });
 
     //delete my review
-    app.delete("/myreviews/:email", async (req, res) => {
-      const email = req.params.email;
-      const query = { email: ObjectId(email) };
-      const result = await reviewCollection.deleteOne(query);
-      res.send(result);
-    });
+    // app.delete("/myreviews/:email", async (req, res) => {
+    //   const email = req.params.email;
+    //   const query = { email: ObjectId(email) };
+    //   const result = await reviewCollection.deleteOne(query);
+    //   res.send(result);
+    // });
 
     app.delete("/myreviews/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await reviewCollection.deleteOne(query);
+      res.send(result);
+    });
+    app.post("/myreviews", async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
       res.send(result);
     });
   } finally {
